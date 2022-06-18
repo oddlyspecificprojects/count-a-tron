@@ -19,6 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "init.h"
+#include "led_control.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -26,13 +27,6 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-typedef struct
-{
-	uint8_t red;
-	uint8_t green;
-	uint8_t blue;
-	uint8_t res;
-} LED_t __attribute__ ((aligned (4)));
 
 /* USER CODE END PTD */
 
@@ -53,12 +47,9 @@ TIM_HandleTypeDef htim2;
 DMA_HandleTypeDef hdma_tim2_ch1;
 /* USER CODE BEGIN PV */
 LED_t led_data[LED_COUNT] = {0};
-uint8_t timer_data_buffer[LED_COUNT * 3 * 8] = {0};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
-void convert_byte_to_timings(uint8_t * timing, uint8_t data);
-void convert_led_to_timings(uint8_t * timing, const LED_t * leds, size_t led_count);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -129,8 +120,7 @@ int main(void)
 			led_data[i].red = (counter + i) != 0 && (counter + i) % 17 == 0 ? brightness : 0;
 			led_data[i].blue = (counter + i) != 0 && (counter + i) % 23 == 0 ? brightness : 0;
 		}
-		convert_led_to_timings(timer_data_buffer, led_data, LED_COUNT);
-		HAL_TIM_PWM_Start_DMA(&htim2, TIM_CHANNEL_1, (uint32_t*)timer_data_buffer, sizeof(timer_data_buffer));
+		write_leds(led_data, LED_COUNT);
 		HAL_Delay(10);		
 	/* USER CODE END WHILE */
 
@@ -139,31 +129,6 @@ int main(void)
 	/* USER CODE END 3 */
 }
 
-void convert_led_to_timings(uint8_t * timing, const LED_t * leds, size_t led_count)
-{
-	for (size_t i = 0; i < led_count; i++)
-	{
-		convert_byte_to_timings(timing + 24 * i, leds[i].green);
-		convert_byte_to_timings(timing + 24 * i + 8, leds[i].blue);
-		convert_byte_to_timings(timing + 24 * i + 16, leds[i].red);
-	}
-	
-}
-
-void convert_byte_to_timings(uint8_t * timing, uint8_t data)
-{
-	for (size_t i = 0; i < 8; i++)
-	{
-		if (data & (1<<(7-i)))
-		{
-			timing[i] = 60;
-		}
-		else
-		{
-			timing[i] = 30;
-		}
-	}
-}
 
 
 /* USER CODE BEGIN 4 */
