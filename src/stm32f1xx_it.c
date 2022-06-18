@@ -60,6 +60,7 @@ extern DMA_HandleTypeDef hdma_tim2_ch1;
 /* USER CODE BEGIN EV */
 extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim2;
+extern uint8_t brightness;
 /* USER CODE END EV */
 
 /******************************************************************************/
@@ -203,7 +204,11 @@ void SysTick_Handler(void)
 void EXTI0_IRQHandler(void)
 {
 	/* USER CODE BEGIN EXTI0_IRQn 0 */
-	htim1.Instance->CNT = 0;
+	brightness >>= 1;
+	if (brightness == 0)
+	{
+		brightness = 255;
+	}
 	/* USER CODE END EXTI0_IRQn 0 */
 	HAL_GPIO_EXTI_IRQHandler(ENCODER_SW_Pin);
 	/* USER CODE BEGIN EXTI0_IRQn 1 */

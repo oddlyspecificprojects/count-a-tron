@@ -42,7 +42,7 @@ typedef struct
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-
+uint8_t brightness = 255;
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -131,9 +131,9 @@ int main(void)
 		}
 		for (size_t i = 0; i < LED_COUNT; i++)
 		{
-			led_data[i].green = (counter + i) != 0 && (counter + i) % 3 == 0 ? 255 : 0;
-			led_data[i].red = (counter + i) != 0 && (counter + i) % 5 == 0 ? 255 : 0;
-			led_data[i].blue = (counter + i) != 0 && (counter + i) % 7 == 0 ? 255 : 0;
+			led_data[i].green = (counter + i) != 0 && (counter + i) % 11 == 0 ? brightness : 0;
+			led_data[i].red = (counter + i) != 0 && (counter + i) % 17 == 0 ? brightness : 0;
+			led_data[i].blue = (counter + i) != 0 && (counter + i) % 23 == 0 ? brightness : 0;
 		}
 		convert_led_to_timings(timer_data_buffer, led_data, LED_COUNT);
 		HAL_TIM_PWM_Start_DMA(&htim2, TIM_CHANNEL_1, (uint32_t*)timer_data_buffer, sizeof(timer_data_buffer));
