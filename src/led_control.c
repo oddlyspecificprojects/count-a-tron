@@ -4,7 +4,7 @@ extern TIM_HandleTypeDef htim2;
 extern DMA_HandleTypeDef hdma_tim2_ch1;
 
 // each data unit is a bit, 3 bytes per led is 24
-static uint8_t s_timer_led_data[LED_COUNT * 24] = {0};
+static uint8_t s_timer_led_data[LED_COUNT * 24 + 50] = {0};
 
 /**
  * @brief Convert a byte to WS2812 timings
