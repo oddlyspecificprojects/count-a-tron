@@ -65,6 +65,8 @@ void MX_RTC_Init(void)
 {
 
 	/* USER CODE BEGIN RTC_Init 0 */
+	RTC_DateTypeDef date = {0};
+	RTC_TimeTypeDef time = {0};
 
 	/* USER CODE END RTC_Init 0 */
 
@@ -76,13 +78,15 @@ void MX_RTC_Init(void)
 	 */
 	hrtc.Instance = RTC;
 	hrtc.Init.AsynchPrediv = RTC_AUTO_1_SECOND;
-	hrtc.Init.OutPut = RTC_OUTPUTSOURCE_ALARM;
+	hrtc.Init.OutPut = RTC_OUTPUTSOURCE_NONE;
+	
 	if (HAL_RTC_Init(&hrtc) != HAL_OK)
 	{
 		Error_Handler();
 	}
 	/* USER CODE BEGIN RTC_Init 2 */
-
+	HAL_RTC_SetDate(&hrtc, &date, RTC_FORMAT_BIN);
+	HAL_RTC_SetTime(&hrtc, &time, RTC_FORMAT_BIN);
 	/* USER CODE END RTC_Init 2 */
 
 }

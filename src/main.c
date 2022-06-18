@@ -16,6 +16,7 @@
 	******************************************************************************
 	*/
 /* USER CODE END Header */
+#include <string.h>
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "init.h"
@@ -67,6 +68,8 @@ int main(void)
 {
 	/* USER CODE BEGIN 1 */
 	uint16_t counter = 0;
+	RTC_AlarmTypeDef alarm;
+	RTC_TimeTypeDef curr_time;
 	/* USER CODE END 1 */
 
 	/* MCU Configuration--------------------------------------------------------*/
@@ -95,8 +98,26 @@ int main(void)
 	HAL_TIM_Encoder_Start(&htim1, TIM_CHANNEL_1);
 	HAL_GPIO_WritePin(FIZZ_GPIO_Port, FIZZ_Pin, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(BUZZ_GPIO_Port, BUZZ_Pin, GPIO_PIN_RESET);
+	HAL_RTC_GetTime(&hrtc, &curr_time, RTC_FORMAT_BIN);
 	
-
+	alarm.Alarm = 1;
+	memcpy(&alarm.AlarmTime, &curr_time, sizeof(RTC_TimeTypeDef));
+	alarm.AlarmTime.Seconds += 10;
+	for (size_t i = 0; i < 10; i++)
+	{
+		HAL_GPIO_TogglePin(FIZZ_GPIO_Port, FIZZ_Pin);
+		HAL_GPIO_TogglePin(BUZZ_GPIO_Port, BUZZ_Pin);
+		HAL_Delay(50);
+	}
+	HAL_RTC_SetAlarm(&hrtc, &alarm, RTC_FORMAT_BIN);
+	HAL_RTC_PollForAlarmAEvent(&hrtc, HAL_MAX_DELAY);
+	for (size_t i = 0; i < 10; i++)
+	{
+		HAL_GPIO_TogglePin(FIZZ_GPIO_Port, FIZZ_Pin);
+		HAL_GPIO_TogglePin(BUZZ_GPIO_Port, BUZZ_Pin);
+		HAL_Delay(50);
+	}
+	
 	/* USER CODE END 2 */
 
 	/* Infinite loop */
@@ -116,9 +137,9 @@ int main(void)
 		}
 		for (size_t i = 0; i < LED_COUNT; i++)
 		{
-			led_data[i].green = (counter + i) != 0 && (counter + i) % 11 == 0 ? brightness : 0;
-			led_data[i].red = (counter + i) != 0 && (counter + i) % 17 == 0 ? brightness : 0;
-			led_data[i].blue = (counter + i) != 0 && (counter + i) % 23 == 0 ? brightness : 0;
+			led_data[i].green = (counter + i) != 0 && (counter + i) % 3 == 0 ? brightness : 0;
+			led_data[i].red = (counter + i) != 0 && (counter + i) % 7 == 0 ? brightness : 0;
+			led_data[i].blue = (counter + i) != 0 && (counter + i) % 11 == 0 ? brightness : 0;
 		}
 		write_leds(led_data, LED_COUNT);
 		HAL_Delay(10);		
