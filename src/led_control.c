@@ -36,8 +36,8 @@ static void convert_byte_to_timings(uint8_t * timing, uint8_t data)
 static void convert_led_to_timings(uint8_t * timing, const LED_t led)
 {
 	convert_byte_to_timings(timing, led.green);
-	convert_byte_to_timings(timing + 8, led.blue);
-	convert_byte_to_timings(timing + 16, led.red);
+	convert_byte_to_timings(timing + 8, led.red);
+	convert_byte_to_timings(timing + 16, led.blue);
 	
 }
 
