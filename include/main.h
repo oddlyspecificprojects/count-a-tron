@@ -41,7 +41,7 @@ extern "C" {
 
 /* Exported constants --------------------------------------------------------*/
 /* USER CODE BEGIN EC */
-
+#define LED_COUNT (16)
 /* USER CODE END EC */
 
 /* Exported macro ------------------------------------------------------------*/
@@ -49,6 +49,7 @@ extern "C" {
 
 /* USER CODE END EM */
 
+void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 /* Exported functions prototypes ---------------------------------------------*/
 void Error_Handler(void);
 
@@ -57,8 +58,11 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define LED_DRIVER_Pin GPIO_PIN_0
+#define LED_DRIVER_GPIO_Port GPIOA
 #define ENCODER_SW_Pin GPIO_PIN_0
 #define ENCODER_SW_GPIO_Port GPIOB
+#define ENCODER_SW_EXTI_IRQn EXTI0_IRQn
 #define FIZZ_Pin GPIO_PIN_12
 #define FIZZ_GPIO_Port GPIOB
 #define BUZZ_Pin GPIO_PIN_13
