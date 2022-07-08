@@ -60,7 +60,8 @@ extern DMA_HandleTypeDef hdma_tim2_ch1;
 /* USER CODE BEGIN EV */
 extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim2;
-extern uint8_t brightness;
+extern TIM_HandleTypeDef htim3;
+extern uint32_t alarm_tick_count;
 /* USER CODE END EV */
 
 /******************************************************************************/
@@ -204,11 +205,12 @@ void SysTick_Handler(void)
 void EXTI0_IRQHandler(void)
 {
 	/* USER CODE BEGIN EXTI0_IRQn 0 */
-	brightness >>= 1;
-	if (brightness == 0)
+	alarm_tick_count = __HAL_TIM_GET_COUNTER(&htim1);
+	if (alarm_tick_count > 1024)
 	{
-		brightness = 255;
+		alarm_tick_count = 1024;
 	}
+	HAL_TIM_Base_Start_IT(&htim3);
 	/* USER CODE END EXTI0_IRQn 0 */
 	HAL_GPIO_EXTI_IRQHandler(ENCODER_SW_Pin);
 	/* USER CODE BEGIN EXTI0_IRQn 1 */
@@ -230,19 +232,6 @@ void DMA1_Channel5_IRQHandler(void)
   /* USER CODE END DMA1_Channel5_IRQn 1 */
 }
 
-/**
-  * @brief This function handles RTC alarm interrupt through EXTI line 17.
-  */
-void RTC_Alarm_IRQHandler(void)
-{
-	/* USER CODE BEGIN RTC_Alarm_IRQn 0 */
-
-	/* USER CODE END RTC_Alarm_IRQn 0 */
-	HAL_RTC_AlarmIRQHandler(&hrtc);
-	/* USER CODE BEGIN RTC_Alarm_IRQn 1 */
-
-	/* USER CODE END RTC_Alarm_IRQn 1 */
-}
 
 /* USER CODE BEGIN 1 */
 void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef *htim)
@@ -254,4 +243,25 @@ void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef *htim)
 	}
 }
 
+/**
+  * @brief This function handles TIM3 global interrupt.
+  */
+void TIM3_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM3_IRQn 0 */
+  
+  /* USER CODE END TIM3_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim3);
+  /* USER CODE BEGIN TIM3_IRQn 1 */
+
+	if (alarm_tick_count == 0)
+	{
+		HAL_TIM_Base_Stop_IT(&htim3);
+	}
+	else
+	{
+		alarm_tick_count--;
+	}
+  /* USER CODE END TIM3_IRQn 1 */
+}
 /* USER CODE END 1 */

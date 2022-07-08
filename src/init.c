@@ -3,6 +3,7 @@
 extern RTC_HandleTypeDef hrtc;
 extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim2;
+extern TIM_HandleTypeDef htim3;
 extern DMA_HandleTypeDef hdma_tim2_ch1;
 
 /**
@@ -56,40 +57,6 @@ void SystemClock_Config(void)
 	HAL_RCC_EnableCSS();
 }
 
-/**
- * @brief RTC Initialization Function
- * @param None
- * @retval None
- */
-void MX_RTC_Init(void)
-{
-
-	/* USER CODE BEGIN RTC_Init 0 */
-	RTC_DateTypeDef date = {0};
-	RTC_TimeTypeDef time = {0};
-
-	/* USER CODE END RTC_Init 0 */
-
-	/* USER CODE BEGIN RTC_Init 1 */
-
-	/* USER CODE END RTC_Init 1 */
-
-	/** Initialize RTC Only
-	 */
-	hrtc.Instance = RTC;
-	hrtc.Init.AsynchPrediv = RTC_AUTO_1_SECOND;
-	hrtc.Init.OutPut = RTC_OUTPUTSOURCE_NONE;
-	
-	if (HAL_RTC_Init(&hrtc) != HAL_OK)
-	{
-		Error_Handler();
-	}
-	/* USER CODE BEGIN RTC_Init 2 */
-	HAL_RTC_SetDate(&hrtc, &date, RTC_FORMAT_BIN);
-	HAL_RTC_SetTime(&hrtc, &time, RTC_FORMAT_BIN);
-	/* USER CODE END RTC_Init 2 */
-
-}
 
 /**
  * @brief TIM1 Initialization Function
@@ -121,7 +88,7 @@ void MX_TIM1_Init(void)
 	sConfig.IC1Selection = TIM_ICSELECTION_DIRECTTI;
 	sConfig.IC1Prescaler = TIM_ICPSC_DIV1;
 	sConfig.IC1Filter = 7;
-	sConfig.IC2Polarity = TIM_ICPOLARITY_FALLING;
+	sConfig.IC2Polarity = TIM_ICPOLARITY_RISING;
 	sConfig.IC2Selection = TIM_ICSELECTION_DIRECTTI;
 	sConfig.IC2Prescaler = TIM_ICPSC_DIV1;
 	sConfig.IC2Filter = 7;
@@ -197,6 +164,46 @@ void MX_TIM2_Init(void)
 
 	/* USER CODE END TIM2_Init 2 */
 	HAL_TIM_MspPostInit(&htim2);
+
+}
+
+void MX_TIM3_Init(void)
+{
+
+  /* USER CODE BEGIN TIM3_Init 0 */
+
+  /* USER CODE END TIM3_Init 0 */
+
+  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+
+  /* USER CODE BEGIN TIM3_Init 1 */
+
+  /* USER CODE END TIM3_Init 1 */
+  htim3.Instance = TIM3;
+  htim3.Init.Prescaler = 99;
+  htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim3.Init.Period = 44999;
+  htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim3, &sClockSourceConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim3, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM3_Init 2 */
+
+  /* USER CODE END TIM3_Init 2 */
 
 }
 
